@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">CyberBro SMS Gateway</string>
+    <string name="notification_channel">CyberBro SMS Gateway</string>
+    <string name="dashboard_status_online">Online</string>
+    <string name="dashboard_status_offline">Offline</string>
+    <string name="dashboard_service_running">Running</string>
+    <string name="dashboard_service_stopped">Stopped</string>
+    <string name="dashboard_api_key_value">%1$s</string>
+    <string name="dashboard_api_endpoint_value">%1$s</string>
+    <string name="dashboard_local_ip_value">%1$s</string>
+    <string name="dashboard_network_type_value">%1$s</string>
+    <string name="dashboard_server_port_value">%1$d</string>
+    <string name="dashboard_queue_count_value">%1$d pending</string>
+    <string name="dashboard_sent_today_value">%1$d sent</string>
+    <string name="dashboard_failed_today_value">%1$d failed</string>
+    <string name="dashboard_sim_status_value">%1$s</string>
+    <string name="dashboard_battery_value">%1$s</string>
+    <string name="settings_no_api_key">No API key configured</string>
+    <string name="settings_version_value">%1$s</string>
+    <string name="sms_logs_empty">No SMS tasks in the queue.</string>
+</resources>

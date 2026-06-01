@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run Gradle Assemble Debug",
+      "type": "pwa-node",
+      "request": "launch",
+      "program": "${workspaceFolder}/gradlew",
+      "args": [":app:assembleDebug"],
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}

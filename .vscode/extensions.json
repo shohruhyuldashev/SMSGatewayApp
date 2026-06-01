@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "fwcd.kotlin",
+    "mathiasfrohlich.kotlin-android-gradle",
+    "vscjava.vscode-java-pack",
+    "ms-vscode.cpptools",
+    "rangav.vscode-thunder-client",
+    "vscjava.vscode-gradle",
+    "redhat.java"
+  ]
+}
