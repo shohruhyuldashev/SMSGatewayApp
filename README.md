@@ -1,36 +1,278 @@
 # CyberBro SMS Gateway
 
-This repository contains a scaffold Android app implementing a local SMS gateway using Kotlin, Ktor, Room, WorkManager and SmsManager.
+Android-based self-hosted SMS Gateway built with Kotlin, Ktor, Room Database, and WorkManager.
 
-Quick start (in VS Code):
+## Features
 
-1. Install Android SDK and Android Platform Tools. Ensure the SDK path is available (example: `/home/youruser/Android/Sdk`).
-2. Open this folder in VS Code.
-3. Make sure `local.properties` contains `sdk.dir=/path/to/Android/Sdk` (this repo contains a placeholder).
-4. Install recommended VS Code extensions (see `.vscode/extensions.json`).
-5. Build the debug APK:
+* SMS sending through Android SIM cards
+* HTTPS (TLS) support
+* API Key authentication
+* SMS queue management
+* Message history API
+* Device monitoring API
+* System statistics and logs
+* Dual SIM support
+* Self-hosted deployment
+* REST API interface
+
+---
+
+## Screenshots
+
+### Dashboard
+
+*Add screenshot here*
+
+### Settings
+
+*Add screenshot here*
+
+### SMS Logs
+
+*Add screenshot here*
+
+---
+
+## Technology Stack
+
+* Kotlin
+* Android SDK
+* Ktor Server
+* Room Database
+* WorkManager
+* OkHttp
+* Material Design 3
+
+---
+
+## API Authentication
+
+All protected endpoints require an API key.
+
+Example:
 
 ```bash
-./gradlew :app:assembleDebug
+curl -k https://PHONE_IP:8443/system \
+-H "x-api-key: YOUR_API_KEY"
 ```
 
-Or use the VS Code task: `Run Build` (Tasks -> Run Task -> `Gradle: assembleDebug`).
+---
 
-Running on device/emulator:
+## API Endpoints
+
+### Health Check
+
+```http
+GET /health
+```
+
+Example:
 
 ```bash
-./gradlew :app:installDebug
+curl -k https://PHONE_IP:8443/health
 ```
 
-Notes:
-- The app runs an embedded Ktor server on port 8080 (inside the device). Use `adb forward tcp:8080 tcp:8080` to access it from your host.
-- Default API key is `default-demo-key` stored in `ApiKeyStore` (change in app settings).
-- Permissions declared in `AndroidManifest.xml` are required: `SEND_SMS`, `INTERNET`, `RECEIVE_BOOT_COMPLETED`, `FOREGROUND_SERVICE`, `WAKE_LOCK`, `ACCESS_NETWORK_STATE`, `READ_PHONE_STATE`.
+---
 
-Files added/important:
-- `app/` Android application module
-- `app/src/main/java/...` Kotlin sources
-- `.vscode/tasks.json` and `.vscode/launch.json` for VS Code integration
-- `local.properties` (please update to your SDK path)
+### Send SMS
 
-If you want, I can try building an APK here — provide the Android SDK path or allow me to install SDK components (large download).
+```http
+POST /send-sms
+```
+
+Request:
+
+```json
+{
+  "id": "msg001",
+  "phone": "+998901234567",
+  "message": "Hello from CyberBro SMS Gateway",
+  "sim": 1
+}
+```
+
+Example:
+
+```bash
+curl -k -X POST https://PHONE_IP:8443/send-sms \
+-H "x-api-key: YOUR_API_KEY" \
+-H "Content-Type: application/json" \
+-d '{
+  "id":"msg001",
+  "phone":"+998901234567",
+  "message":"Hello from CyberBro SMS Gateway",
+  "sim":1
+}'
+```
+
+---
+
+### Message Status
+
+```http
+GET /messages/{id}
+```
+
+Example:
+
+```bash
+curl -k https://PHONE_IP:8443/messages/msg001 \
+-H "x-api-key: YOUR_API_KEY"
+```
+
+---
+
+### System Information
+
+```http
+GET /system
+```
+
+Returns:
+
+* Device model
+* Android version
+* Battery level
+* Local IP address
+* Network type
+* SIM information
+* RAM usage
+* Uptime
+* HTTPS status
+
+---
+
+### SIM Information
+
+```http
+GET /sims
+```
+
+Example:
+
+```bash
+curl -k https://PHONE_IP:8443/sims \
+-H "x-api-key: YOUR_API_KEY"
+```
+
+---
+
+### Security Status
+
+```http
+GET /security
+```
+
+Example:
+
+```bash
+curl -k https://PHONE_IP:8443/security \
+-H "x-api-key: YOUR_API_KEY"
+```
+
+---
+
+### Logs
+
+```http
+GET /logs
+GET /logs/security
+```
+
+Example:
+
+```bash
+curl -k https://PHONE_IP:8443/logs/security \
+-H "x-api-key: YOUR_API_KEY"
+```
+
+---
+
+## HTTPS Support
+
+The gateway supports HTTPS using a PKCS12 keystore.
+
+Example:
+
+```bash
+curl -k https://PHONE_IP:8443/system \
+-H "x-api-key: YOUR_API_KEY"
+```
+
+For development and private networks, a self-signed certificate can be used.
+
+---
+
+## Security Features
+
+* API Key Authentication
+* HTTPS/TLS Support
+* Request Validation
+* Rate Limiting
+* Audit Logging
+* Queue Processing
+
+---
+
+## Installation
+
+Clone the repository:
+
+```bash
+git clone git@github.com:shohruhyuldashev/SMSGatewayApp.git
+cd SMSGatewayApp
+```
+
+Build APK:
+
+```bash
+./gradlew assembleDebug
+```
+
+Install:
+
+```bash
+adb install -r app/build/outputs/apk/debug/app-debug.apk
+```
+
+---
+
+## Project Structure
+
+```text
+app/
+├── api/
+├── device/
+├── security/
+├── service/
+├── sms/
+├── storage/
+├── integration/
+└── ui/
+```
+
+---
+
+## Roadmap
+
+* SMS Delivery Tracking
+* Incoming SMS API
+* Webhook Events
+* Advanced Analytics
+* Swagger/OpenAPI Documentation
+* Multi-device Management
+
+---
+
+## Author
+
+Shohruh Yuldashev (CyberBro)
+
+GitHub:
+https://github.com/shohruhyuldashev
+
+---
+
+## License
+
+MIT License
