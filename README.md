@@ -21,15 +21,18 @@ Android-based self-hosted SMS Gateway built with Kotlin, Ktor, Room Database, an
 
 ### Dashboard
 
-*Add screenshot here*
+<img width="590" height="1112" alt="image" src="https://github.com/user-attachments/assets/bedaa379-25e2-437f-a4ef-1c099b974ea0" />
+
 
 ### Settings
 
-*Add screenshot here*
+<img width="591" height="1149" alt="image" src="https://github.com/user-attachments/assets/cb0acdfe-752a-44d8-a9f2-a3b8f8596542" />
+
 
 ### SMS Logs
 
-*Add screenshot here*
+<img width="591" height="1149" alt="image" src="https://github.com/user-attachments/assets/704c85c1-3004-4e7a-8c6f-b7c0f7b33bfd" />
+
 
 ---
 
