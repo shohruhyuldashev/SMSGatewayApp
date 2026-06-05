@@ -1,13 +1,14 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.cyberbro.smsgateway">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
@@ -30,7 +31,11 @@
         <service
             android:name=".service.ForegroundSmsService"
             android:exported="false"
-            android:foregroundServiceType="connectedDevice|phoneCall" />
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="SMS Gateway automation service for sending and receiving SMS messages via API" />
+        </service>
 
         <receiver android:name=".service.BootReceiver" android:exported="true">
             <intent-filter>

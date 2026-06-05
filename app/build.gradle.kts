@@ -11,14 +11,23 @@ kotlin {
 
 android {
     namespace = "com.cyberbro.smsgateway"
-    compileSdk = 34
+    compileSdk = 35
+
+    signingConfigs {
+        create("release") {
+            storeFile = file("release-key.jks")
+            storePassword = "cyberbro2026"
+            keyAlias = "cyberbro"
+            keyPassword = "cyberbro2026"
+        }
+    }
 
     defaultConfig {
         applicationId = "com.cyberbro.smsgateway"
         minSdk = 24
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        targetSdk = 35
+        versionCode = 2
+        versionName = "2.0"
 
         vectorDrawables {
             useSupportLibrary = true
@@ -26,8 +35,12 @@ android {
     }
 
     buildTypes {
+        debug {
+            signingConfig = signingConfigs.getByName("release")
+        }
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
@@ -83,5 +96,6 @@ dependencies {
     implementation("io.ktor:ktor-server-content-negotiation:2.3.4")
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.4")
     implementation("io.ktor:ktor-server-rate-limit:2.3.4")
+    implementation("io.ktor:ktor-server-status-pages:2.3.4")
     implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.11")
 }

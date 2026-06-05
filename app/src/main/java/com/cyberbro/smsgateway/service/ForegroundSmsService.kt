@@ -6,6 +6,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
@@ -21,7 +22,21 @@ class ForegroundSmsService : Service() {
             .setSmallIcon(R.drawable.icon)
             .setOngoing(true)
             .build()
-        startForeground(1, notification)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            startForeground(1, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            @Suppress("DEPRECATION")
+            startForeground(1, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_NONE)
+        } else {
+            startForeground(1, notification)
+        }
+        running = true
+    }
+
+    override fun onDestroy() {
+        running = false
+        super.onDestroy()
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -42,11 +57,21 @@ class ForegroundSmsService : Service() {
     }
 
     companion object {
+        @Volatile
+        private var running = false
+
         fun isRunning(context: android.content.Context): Boolean {
-            val activityManager = context.getSystemService(android.content.Context.ACTIVITY_SERVICE) as ActivityManager
-            @Suppress("DEPRECATION")
-            return activityManager.getRunningServices(Int.MAX_VALUE)
-                .any { it.service.className == ForegroundSmsService::class.java.name }
+            // Primary: use our own flag (reliable)
+            if (running) return true
+            // Fallback: check via ActivityManager for edge cases (e.g., after process restart)
+            return try {
+                val activityManager = context.getSystemService(android.content.Context.ACTIVITY_SERVICE) as ActivityManager
+                @Suppress("DEPRECATION")
+                activityManager.getRunningServices(Int.MAX_VALUE)
+                    .any { it.service.className == ForegroundSmsService::class.java.name }
+            } catch (e: Exception) {
+                false
+            }
         }
     }
 }

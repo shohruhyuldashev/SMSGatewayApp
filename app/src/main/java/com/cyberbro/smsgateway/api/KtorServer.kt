@@ -23,6 +23,7 @@ import kotlinx.serialization.json.Json
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 import io.ktor.server.plugins.ratelimit.*
+import io.ktor.server.plugins.statuspages.*
 import kotlin.time.Duration.Companion.seconds
 
 // ─── In-memory webhook store (reset on restart) ───────────────────────────────
@@ -106,6 +107,14 @@ object KtorServer {
         
         install(ContentNegotiation) {
             json(Json { ignoreUnknownKeys = true; prettyPrint = false })
+        }
+
+        // Global exception handler — never return raw stack traces
+        install(StatusPages) {
+            exception<Throwable> { call, cause ->
+                android.util.Log.e("KtorServer", "Unhandled exception on ${call.request.uri}", cause)
+                call.respond(HttpStatusCode.InternalServerError, ErrorResponse(cause.message ?: "internal error"))
+            }
         }
 
         routing {
@@ -249,17 +258,17 @@ object KtorServer {
                 call.respond(ApiKeyResponse(newKey))
             }
 
-            // ── Logs (in-memory event log stub) ──────────────────────────────
+            // ── Logs ──────────────────────────────────────────────────────────
             get("/logs") {
                 val dao = SmsDatabase.getInstance(context).smsTaskDao()
                 val tasks = dao.getAllTasks().take(100)
+                val fmt = java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault())
                 call.respond(tasks.map {
-                    mapOf(
-                        "time" to java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault())
-                            .format(java.util.Date(it.createdAt)),
-                        "event" to "SMS_${it.status.uppercase()}",
-                        "phone" to it.phoneNumber,
-                        "id" to it.id
+                    LogEntry(
+                        time = fmt.format(java.util.Date(it.createdAt)),
+                        event = "SMS_${it.status.uppercase()}",
+                        phone = it.phoneNumber,
+                        id = it.id
                     )
                 })
             }
@@ -267,21 +276,21 @@ object KtorServer {
             get("/logs/errors") {
                 val dao = SmsDatabase.getInstance(context).smsTaskDao()
                 val tasks = dao.getTasksByStatus("failed")
+                val fmt = java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault())
                 call.respond(tasks.map {
-                    mapOf(
-                        "time" to java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault())
-                            .format(java.util.Date(it.createdAt)),
-                        "event" to "SMS_FAILED",
-                        "phone" to it.phoneNumber,
-                        "id" to it.id
+                    LogEntry(
+                        time = fmt.format(java.util.Date(it.createdAt)),
+                        event = "SMS_FAILED",
+                        phone = it.phoneNumber,
+                        id = it.id
                     )
                 })
             }
 
             get("/logs/security") {
+                val fmt = java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault())
                 call.respond(listOf(
-                    mapOf("time" to java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault())
-                        .format(java.util.Date()), "event" to "SERVER_STARTED")
+                    LogEntry(time = fmt.format(java.util.Date()), event = "SERVER_STARTED")
                 ))
             }
 
@@ -418,6 +427,9 @@ data class ApiKeyResponse(val apiKey: String)
 
 @Serializable
 data class WebhookRegisteredResponse(val status: String, val url: String, val total: Int)
+
+@Serializable
+data class LogEntry(val time: String, val event: String, val phone: String? = null, val id: String? = null)
 
 // ── Extension ────────────────────────────────────────────────────────────────
 
