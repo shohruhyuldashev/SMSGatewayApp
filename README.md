@@ -269,7 +269,7 @@ app/
 
 ## Author
 
-Shohruh Yuldashev (CyberBro)
+Shohruh Yuldashev
 
 GitHub:
 https://github.com/shohruhyuldashev
