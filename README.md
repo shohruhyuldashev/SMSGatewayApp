@@ -1,4 +1,4 @@
-# CyberBro SMS Gateway
+# SMS Gateway App
 
 Android-based self-hosted SMS Gateway built with Kotlin, Ktor, Room Database, and WorkManager.
 
